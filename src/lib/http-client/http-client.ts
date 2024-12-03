@@ -13,8 +13,9 @@ export interface HttpRequest<T> {
 }
 
 export interface FormattedError {
-	axiosError: AxiosError;
-	serverError: unknown;
+	message: string;
+	axiosError?: AxiosError | axios.Cancel;
+	serverError?: unknown;
 }
 
 export class HttpClient {
@@ -50,7 +51,7 @@ export class HttpClient {
 					const { data } = await this._axiosInstance.request({ ...config, signal: abortController.signal });
 					return data as T;
 				} catch (error) {
-					throw this._getFormattedError(error as AxiosError);
+					throw this._getFormattedError(error);
 				} finally {
 					delete this._requests[requestId];
 				}
@@ -65,12 +66,27 @@ export class HttpClient {
 		return request;
 	}
 
-	_getFormattedError(error: AxiosError) {
-		const formattedError: FormattedError = {
-			axiosError: error,
-			serverError: error.response?.data,
-		};
+	_getFormattedError(error: unknown): FormattedError {
+		if (axios.isCancel(error)) {
+			return {
+				message: 'Request has been canceled.',
+				axiosError: error,
+				serverError: undefined,
+			};
+		}
 
-		return formattedError;
+		if (axios.isAxiosError(error)) {
+			return {
+				message: error.message,
+				axiosError: error,
+				serverError: error.response?.data ?? undefined,
+			};
+		}
+
+		return {
+			message: 'An unknown error has occurred.',
+			axiosError: undefined,
+			serverError: undefined,
+		};
 	}
 }

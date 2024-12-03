@@ -17,6 +17,8 @@ export function AsyncComponent<T>({ httpRequest, children }: AsyncComponentProps
 			setData(response);
 			setError(undefined);
 		} catch (error) {
+			console.log(error);
+
 			setData(undefined);
 			setError(error as FormattedError);
 		}
@@ -33,7 +35,7 @@ export function AsyncComponent<T>({ httpRequest, children }: AsyncComponentProps
 	}, [memoizedHttpRequest]);
 
 	if (error) {
-		return <p>There was an error</p>;
+		return <p>Error: {error.message}</p>;
 	}
 
 	if (data) {
