@@ -13,12 +13,14 @@ export function AsyncComponent<T>({ httpRequest, children }: AsyncComponentProps
 
 	const fetchData = useCallback(async () => {
 		try {
+			setData(undefined);
+			setError(undefined);
+
 			const response = await memoizedHttpRequest.fetch();
+
 			setData(response);
 			setError(undefined);
 		} catch (error) {
-			console.log(error);
-
 			setData(undefined);
 			setError(error as FormattedError);
 		}

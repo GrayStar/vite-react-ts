@@ -20,6 +20,12 @@ export default tseslint.config(
 		rules: {
 			...reactHooks.configs.recommended.rules,
 			'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+			'no-mixed-spaces-and-tabs': 'off',
+			curly: 'error',
+			'no-unreachable': 'error',
+			eqeqeq: 'error',
+			'no-console': 'warn',
+			complexity: ['warn', 20],
 		},
 	}
 );
